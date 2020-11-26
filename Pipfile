@@ -4,8 +4,22 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
 
 [packages]
+numpy = "*"
+matplotlib = "*"
+scipy = "*"
+torch = "*"
+pennylane = "*"
+pennylane-forest = {git = "https://github.com/rigetti/pennylane-forest.git"}
+pennylane-qulacs = {extras = ["gpu"], version = "*"}
+pennylane-pq = "*"
+bistiming = "*"
+qiskit = "*"
+tensorflow = "==2.3.1"
+tensorflow-quantum = "*"
+pennylane-lightning = "*"
 
 [requires]
 python_version = "3.6"
