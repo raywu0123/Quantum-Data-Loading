@@ -1,5 +1,6 @@
 import numpy as np
-
+from scipy.spatial.distance import jensenshannon
+from scipy.stats import entropy
 
 epsilon = 1e-12
 
@@ -25,3 +26,21 @@ def ints_to_onehot(ints: np.array, num_class: int) -> np.array:
     for idx, i in enumerate(ints):
         ret[idx][i] = 1
     return ret
+
+
+def get_pmf(counts: np.array):
+    return counts / np.sum(counts)
+
+
+def evaluate(target: np.array, outcome: np.array, verbose_pmf: bool = False):
+    assert(target.shape == outcome.shape)
+    target_pmf = get_pmf(target)
+    outcome_pmf = get_pmf(outcome)
+    
+    if verbose_pmf:
+        print(outcome_pmf)
+        print(target_pmf)
+    return {
+        'kl': entropy(target_pmf, outcome_pmf),
+        'js': jensenshannon(target_pmf, outcome_pmf) ** 2,
+    }

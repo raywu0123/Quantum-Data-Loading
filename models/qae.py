@@ -3,16 +3,17 @@ from functools import reduce
 import torch
 from torch import nn, autograd
 import numpy as np
+from pprint import pprint
 
 from .base import ModelBaseClass
-from .utils import DataGenerator, sample_from
+from .utils import DataGenerator, sample_from, counts
 from .torch_circuit import (
     ParallelRYComplex, 
     EntangleComplex, 
     Exp, 
     batch_kronecker_complex,
 )
-from utils import epsilon, ints_to_onehot
+from utils import epsilon, ints_to_onehot, evaluate
 
 
 class Encoder(nn.Module):
@@ -74,6 +75,7 @@ class QAE(ModelBaseClass):
         )
 
     def fit(self, data: np.array) -> np.array:
+        data_counts = counts(data, self.n_qubit)
         for i_epoch in range(self.n_epoch):
             recon_losses = []
             trace_losses = []
@@ -83,12 +85,28 @@ class QAE(ModelBaseClass):
                 trace_losses.append(trace_loss)
 
             print(f'{i_epoch:3d} RECON: {np.mean(recon_losses):4f} TRACE: {np.mean(trace_losses):4f}')
-        
+
+        eval_results = evaluate(data_counts, self.get_exact_outcome(data))
+        print("Stats with exact density matrix:")
+        pprint(eval_results)
+        return self.get_outcome(data)
+
+    def get_outcome(self, data: np.array):
         with torch.no_grad():
             z = self.calculate_latent(data)
             probs = self.decoder.forward_prob(z)[0]
-
         return probs.cpu().data.numpy()
+
+    def get_exact_outcome(self, data: np.array):
+        probs = []
+        for batch in DataGenerator(data, self.batch_size):
+            batch = torch.from_numpy(batch).to(self.device).long()
+            theta, phi = self.encoder(batch)  # (N, self.n_qubit)
+            z = self.prepare_state(theta, phi)
+            p = self.decoder.forward_prob(z)
+            probs.append(p.mean(dim=0).cpu().data.numpy())
+        
+        return np.mean(probs, axis=0)
 
     @staticmethod
     def prepare_state(theta: torch.Tensor, phi: torch.Tensor):
@@ -118,8 +136,10 @@ class QAE(ModelBaseClass):
         theta, phi = self.encoder(batch)  # (N, n_qubit)
         z = self.prepare_state(theta, phi)  
         recon = self.decoder.forward_prob(z)
-        recon_loss_fn = nn.NLLLoss(reduction='none')
-        recon_loss = recon_loss_fn(torch.log(recon + epsilon), batch)
+        recon_loss = -torch.log(
+            torch.gather(recon, dim=1, index=batch.unsqueeze(-1)) # inner product, should be a swap test
+            + epsilon
+        )  
         
         theta, phi = theta.unsqueeze(-1), phi.unsqueeze(-1)
         rho_real = torch.cat([
@@ -134,7 +154,7 @@ class QAE(ModelBaseClass):
         mean_rho_real, mean_rho_imag = rho_real.mean(dim=0), rho_imag.mean(dim=0)
         trace_loss = self.calculate_trace_loss(mean_rho_real, mean_rho_imag)        
         
-        loss = recon_loss.mean() + 1000 * trace_loss
+        loss = recon_loss.mean() + 100. * trace_loss
         self.opt.zero_grad()
         loss.backward()
         self.opt.step()
