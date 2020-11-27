@@ -66,7 +66,7 @@ class QCBM(ModelBaseClass):
         self.n_qubit = n_qubit
         self.batch_size = batch_size
         self.n_epoch = n_epoch
-        self.device = 'gpu:0' if torch.cuda.is_available() else 'cpu'
+        self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
         
         self.ema = EMA(0.9).to(self.device)
         self.mmd = MMD([0.5, 1., 2., 4.], n_qubit=n_qubit).to(self.device)

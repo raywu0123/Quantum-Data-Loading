@@ -43,7 +43,7 @@ class GAN(ModelBaseClass):
         self.n_qubit = n_qubit
         self.batch_size = batch_size
         self.n_epoch = n_epoch
-        self.device = 'gpu:0' if torch.cuda.is_available() else 'cpu'
+        self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
         self.generator = Generator(
             z_dim=self.n_qubit,
             data_dim=self.n_qubit,

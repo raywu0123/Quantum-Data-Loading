@@ -66,7 +66,7 @@ class QAE(ModelBaseClass):
         self.n_qubit = n_qubit
         self.batch_size = batch_size
         self.n_epoch = n_epoch
-        self.device = 'gpu:0' if torch.cuda.is_available() else 'cpu'
+        self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
         self.encoder = Encoder(n_qubit, 3).to(self.device)
         self.decoder = Decoder(n_qubit, 3).to(self.device)
         self.opt = torch.optim.Adam(

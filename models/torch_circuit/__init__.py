@@ -34,7 +34,7 @@ class ParallelRY(nn.Module):
     def forward(self, x: torch.Tensor):
         cos = torch.cos(self.params).view(self.n_qubit, 1)
         sin = torch.sin(self.params).view(self.n_qubit, 1)
-        single_qubit_gates = torch.cat([cos, -sin, sin, cos], axis=1).view(self.n_qubit, 2, 2)
+        single_qubit_gates = torch.cat([cos, -sin, sin, cos], dim=1).view(self.n_qubit, 2, 2)
         
         self.op = reduce(lambda x, y: kronecker(x, y), single_qubit_gates)
         return x @ self.op
@@ -71,7 +71,7 @@ class Entangle(nn.Module):
                     g[j, j] = -1            
             gates.append(g)
 
-        self.op = reduce(lambda x, y: x * y, gates)
+        self.op = nn.Parameter(reduce(lambda x, y: x * y, gates), requires_grad=False)
 
     def forward(self, x: torch.Tensor):
         return x @ self.op

@@ -46,7 +46,7 @@ class VAE(ModelBaseClass):
         self.n_qubit = n_qubit
         self.batch_size = batch_size
         self.n_epoch = n_epoch
-        self.device = 'gpu:0' if torch.cuda.is_available() else 'cpu'
+        self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
         self.z_dim = n_qubit
         self.encoder = Encoder(self.z_dim, n_qubit).to(self.device)
         self.decoder = Decoder(self.z_dim, n_qubit).to(self.device)

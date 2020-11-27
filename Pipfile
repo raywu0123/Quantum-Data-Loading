@@ -11,15 +11,7 @@ numpy = "*"
 matplotlib = "*"
 scipy = "*"
 torch = "*"
-pennylane = "*"
-pennylane-forest = {git = "https://github.com/rigetti/pennylane-forest.git"}
-pennylane-qulacs = {extras = ["gpu"], version = "*"}
-pennylane-pq = "*"
 bistiming = "*"
-qiskit = "*"
-tensorflow = "==2.3.1"
-tensorflow-quantum = "*"
-pennylane-lightning = "*"
 tqdm = "*"
 
 [requires]

@@ -1,9 +1,19 @@
+
 from pprint import pprint
 import contextlib
 import sys
 from typing import List
 
+import os
+os.environ['PYTHONHASHSEED'] = str(0)
+import random
+random.seed(0)
+
 import numpy as np
+np.random.seed(0)
+import torch
+torch.random.manual_seed(0)
+
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
