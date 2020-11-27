@@ -10,9 +10,9 @@ pytest = "*"
 numpy = "*"
 matplotlib = "*"
 scipy = "*"
-torch = "*"
 bistiming = "*"
 tqdm = "*"
+torch = "==1.0.1"
 
 [requires]
 python_version = "3.6"

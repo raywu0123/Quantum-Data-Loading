@@ -116,12 +116,12 @@ class QAE(ModelBaseClass):
         y_imag = torch.sin(theta / 2) * torch.sin(phi)
 
         single_qubit_states_real = torch.cat([
-            x_real.T.unsqueeze(-1),
-            y_real.T.unsqueeze(-1),
+            x_real.transpose(0, 1).unsqueeze(-1),
+            y_real.transpose(0, 1).unsqueeze(-1),
         ], dim=-1)  # (n_qubit, N, 2)
         single_qubit_states_imag = torch.cat([
-            x_imag.T.unsqueeze(-1),
-            y_imag.T.unsqueeze(-1),
+            x_imag.transpose(0, 1).unsqueeze(-1),
+            y_imag.transpose(0, 1).unsqueeze(-1),
         ], dim=-1)
         
         z = reduce(
@@ -198,8 +198,8 @@ class QAE(ModelBaseClass):
         theta = np.arccos(np.sqrt(mean_rho_real[:, 0, 0])) * 2
         phi = np.arctan(mean_rho_imag[:, 0, 1] / mean_rho_real[:, 0, 1])
         
-        theta = torch.from_numpy(theta).unsqueeze(0)
-        phi = torch.from_numpy(phi).unsqueeze(0)
+        theta = torch.from_numpy(theta).unsqueeze(0).to(self.device)
+        phi = torch.from_numpy(phi).unsqueeze(0).to(self.device)
         z = self.prepare_state(theta, phi)
 
         print(

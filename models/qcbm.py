@@ -39,7 +39,7 @@ class MMD(nn.Module):
 
     def forward(self, x, y):
         x_y = (x - y).unsqueeze(-1)
-        return x_y.T @ self.K @ x_y
+        return x_y.transpose(0, 1) @ self.K @ x_y
 
     def to_binary(self, x):
         r = torch.arange(self.n_qubit)
@@ -104,7 +104,7 @@ class QCBM(ModelBaseClass):
         selected_probs = torch.gather(fake_probs, dim=-1, index=fake_data)
         log_selected_probs = torch.log(selected_probs + epsilon).squeeze(dim=-1)
 
-        fake_data_pmf = (torch.arange(2 ** self.n_qubit) == fake_data).sum(dim=0).float() / self.batch_size
+        fake_data_pmf = (torch.arange(2 ** self.n_qubit, device=self.device) == fake_data).sum(dim=0).float() / self.batch_size
         
         mmd = self.mmd(data_pmf, fake_data_pmf)
         reward = -mmd

@@ -45,7 +45,7 @@ class ParallelRYComplex(nn.Module):
     def __init__(self, n_qubit: int):
         super().__init__()
         self.n_qubit = n_qubit
-        self.params = nn.parameter.Parameter(
+        self.params = nn.Parameter(
             (torch.rand([n_qubit]) * 2 - 1) * np.pi
         )
 
@@ -91,7 +91,7 @@ class EntangleComplex(nn.Module):
                     g[j, j] = -1            
             gates.append(g)
 
-        self.op = reduce(lambda x, y: x * y, gates)
+        self.op = nn.Parameter(reduce(lambda x, y: x * y, gates), requires_grad=False)
 
     def forward(self, x: torch.Tensor):
         return (x[0] @ self.op, x[1] @ self.op)
