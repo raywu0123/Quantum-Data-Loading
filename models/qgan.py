@@ -3,8 +3,6 @@ from functools import partial
 import numpy as np
 import torch
 from torch import nn
-import pennylane as qml
-from pennylane import broadcast
 
 from utils import bits_to_ints, epsilon
 from .base import ModelBaseClass
@@ -14,9 +12,8 @@ from .torch_circuit import ParallelRY, Entangle
 
 class Generator(nn.Module):
 
-    def __init__(self, qdevice, n_qubit: int, k: int):
+    def __init__(self, n_qubit: int, k: int):
         super().__init__()
-        self.qdevice = qdevice
         self.n_qubit = n_qubit
         self.preparation_layer = ParallelRY(n_qubit)
 
@@ -55,12 +52,10 @@ class QGAN(ModelBaseClass):
         self.n_qubit = n_qubit
         self.batch_size = batch_size
         self.n_epoch = n_epoch
-        self.device = 'gpu:0' if torch.cuda.is_available() else 'cpu'
-        self.qdevice = qml.device('qulacs.simulator', wires=self.n_qubit, shots=1)
-        
+        self.device = 'gpu:0' if torch.cuda.is_available() else 'cpu'        
         self.ema = EMA(0.9).to(self.device)
         
-        self.generator = Generator(self.qdevice, self.n_qubit, k=3).to(self.device)
+        self.generator = Generator(self.n_qubit, k=3).to(self.device)
         self.discriminator = Discriminator(self.n_qubit).to(self.device)
         self.g_optim = torch.optim.Adam(params=self.generator.parameters(), lr=1e-2, amsgrad=True)
         self.d_optim = torch.optim.Adam(params=self.discriminator.parameters(), lr=1e-2, amsgrad=True)

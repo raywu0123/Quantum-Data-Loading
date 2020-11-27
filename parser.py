@@ -10,4 +10,6 @@ def get_parser():
     parser.add_argument('-n_qubit', type=int, default=3)
     parser.add_argument('-batch_size', type=int, default=2000)
     parser.add_argument('-n_epoch', type=int, default=50)
+
+    parser.add_argument('-repeat', type=int, default=1)
     return parser
