@@ -5,10 +5,10 @@ import numpy as np
 
 class LogNormal(DataBaseClass):
 
-    mu, sigma = 1., 1.
-
-    def __init__(self, range_: int):
-        super().__init__(range_)
+    def __init__(self, n_bit: int, mu: float, sigma: float):
+        self._n_bit = n_bit
+        self.range = 2 ** n_bit
+        self.mu, self.sigma = mu, sigma
 
     def get_data(self, num: int) -> np.array:
         ds = []

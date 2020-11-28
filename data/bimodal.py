@@ -10,8 +10,10 @@ class Bimodal(DataBaseClass):
     mu1, sigma1 = .5, 1.
     mu2, sigma2 = 3.5, .5
 
-    def __init__(self, range_: int):
-        super().__init__(range_)
+    def __init__(self, n_bit: int, mu1: float, sigma1: float, mu2: float, sigma2: float):
+        self._n_bit = n_bit
+        self.range = 2 ** n_bit
+        self.mu1, self.sigma1, self.mu2, self.sigma2 = mu1, sigma1, mu2, sigma2
 
     def get_point(self):
         return [

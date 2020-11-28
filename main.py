@@ -51,14 +51,19 @@ def calculate_eval_stats(results: List[dict]):
     std = {f'{k}_std': np.std(soa[k], ddof=1) for k in keys}
     return {**mean, **std}
 
+
 if __name__ == '__main__':
     parser = get_parser()
     args = parser.parse_args()
 
-    data = DATA_HUB[args.data](range_=2 ** args.n_qubit)
+    data = DATA_HUB[args.data]()
     data_points = data.get_data(num=args.N)
-    data_counts = counts(data_points, args.n_qubit)
 
+    if args.show_data_hist:
+        plt.hist(data_points, bins= 2 ** data.n_bit, range=(0, 2 ** data.n_bit - 1))
+        plt.show()
+
+    data_counts = counts(data_points, data.n_bit)
 
     iterator = range(args.repeat)
     if args.repeat > 1:
@@ -68,7 +73,7 @@ if __name__ == '__main__':
     for _ in iterator:        
         with verbose_manager(args.repeat == 1):
             model = MODEL_HUB[args.model](
-                n_qubit=args.n_qubit,
+                n_qubit=data.n_bit,
                 batch_size=args.batch_size,
                 n_epoch=args.n_epoch,
             )

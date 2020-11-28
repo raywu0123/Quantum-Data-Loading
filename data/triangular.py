@@ -7,8 +7,10 @@ class Triangular(DataBaseClass):
 
     left, mode, right = 0, 2, 7
 
-    def __init__(self, range_: int):
-        super().__init__(range_)
+    def __init__(self, n_bit: int, left: int, mode: int, right: int):
+        self._n_bit = n_bit
+        self.range = 2 ** n_bit
+        self.left, self.mode, self.right = left, mode, right
 
     def get_data(self, num: int) -> np.array:
         ds = []

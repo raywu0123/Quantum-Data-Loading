@@ -5,9 +5,8 @@ import numpy as np
 
 class BarAndStripes(DataBaseClass):
 
-    def __init__(self, range_: int, width: int, height: int):
-        super().__init__(range_)
-        assert range_ == 2 ** (width * height)
+    def __init__(self, width: int, height: int):
+        self._n_bit = width * height
         self.COL, self.ROW = width, height
 
     def get_data(self, num: int) -> np.array:
