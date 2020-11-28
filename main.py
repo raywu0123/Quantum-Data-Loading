@@ -59,12 +59,12 @@ if __name__ == '__main__':
     data_points = data.get_data(num=args.N)
     data_counts = counts(data_points, args.n_qubit)
 
-    eval_results = []
 
     iterator = range(args.repeat)
     if args.repeat > 1:
         iterator = tqdm(iterator)
     
+    eval_results = []
     for _ in iterator:        
         with verbose_manager(args.repeat == 1):
             model = MODEL_HUB[args.model](

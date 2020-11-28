@@ -86,7 +86,7 @@ class GAN(ModelBaseClass):
         selected_probs = torch.gather(fake_probs, dim=-1, index=fake_data)
         # no log as paper
 
-        baseline = self.ema(reward.mean())
+        baseline = self.ema(reward.mean().data)
         advantage = reward - baseline
         g_loss = -(advantage.detach() * selected_probs).mean()   # policy gradient
         self.g_optim.zero_grad()
