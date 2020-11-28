@@ -76,6 +76,7 @@ if __name__ == '__main__':
                 n_qubit=data.n_bit,
                 batch_size=args.batch_size,
                 n_epoch=args.n_epoch,
+                circuit_depth=args.circuit_depth,
             )
             outcome = model.fit(data_points)
 

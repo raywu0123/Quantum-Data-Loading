@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from torch import nn
 
-from utils import bits_to_ints, epsilon, evaluate, get_pmf
+from utils import bits_to_ints, epsilon, get_pmf
 from .base import ModelBaseClass
 from .utils import EMA, DataGenerator, sample_from, counts
 from .torch_circuit import ParallelRY, Entangle
@@ -62,7 +62,7 @@ class MMD(nn.Module):
 
 class QCBM(ModelBaseClass):
 
-    def __init__(self, n_qubit: int, batch_size: int, n_epoch: int, **kwargs):
+    def __init__(self, n_qubit: int, batch_size: int, n_epoch: int, circuit_depth: int, **kwargs):
         self.n_qubit = n_qubit
         self.batch_size = batch_size
         self.n_epoch = n_epoch
@@ -71,7 +71,7 @@ class QCBM(ModelBaseClass):
         self.ema = EMA(0.9).to(self.device)
         self.mmd = MMD([0.5, 1., 2., 4.], n_qubit=n_qubit).to(self.device)
         
-        self.generator = Generator(self.n_qubit, k=3).to(self.device)
+        self.generator = Generator(self.n_qubit, k=circuit_depth).to(self.device)
         self.optim = torch.optim.Adam(params=self.generator.parameters(), lr=1e-2)
 
     def fit(self, data: np.array) -> np.array:
@@ -85,8 +85,7 @@ class QCBM(ModelBaseClass):
                 mmd_loss = self.train_generator(data_pmf)
                 mmd_losses.append(mmd_loss)
             
-            eval_results = evaluate(data_counts, self.get_outcome())
-            print(f'{i_epoch} MMD: {np.mean(mmd_losses):4f}　KL: {eval_results["kl"]:4f} JS: {eval_results["js"]:4f}')
+            print(f'{i_epoch} MMD: {np.mean(mmd_losses):4f}')
         
         return self.get_outcome()
 
