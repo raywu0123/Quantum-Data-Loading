@@ -49,7 +49,9 @@ def calculate_eval_stats(results: List[dict]):
 
     mean = {k: np.mean(soa[k]) for k in keys}
     std = {f'{k}_std': np.std(soa[k], ddof=1) for k in keys}
-    return {**mean, **std}
+    maximum = {f'{k}_max': np.max(soa[k]) for k in keys}
+    minumum = {f'{k}_min': np.min(soa[k]) for k in keys}
+    return {**mean, **std, **maximum, **minumum}
 
 
 if __name__ == '__main__':
@@ -70,7 +72,7 @@ if __name__ == '__main__':
         iterator = tqdm(iterator)
     
     eval_results = []
-    for _ in iterator:        
+    for _ in iterator:
         with verbose_manager(args.repeat == 1):
             model = MODEL_HUB[args.model](
                 n_qubit=data.n_bit,
