@@ -20,8 +20,8 @@ from tqdm import tqdm
 from data import DATA_HUB
 from models import MODEL_HUB
 from models.utils import counts
-from parser import get_parser
-from utils import ints_to_bits, evaluate
+from argparser import get_parser
+from utils import evaluate
 
 
 
@@ -55,8 +55,8 @@ def calculate_eval_stats(results: List[dict]):
 
 
 if __name__ == '__main__':
-    parser = get_parser()
-    args = parser.parse_args()
+    p = get_parser()
+    args = p.parse_args()
 
     data = DATA_HUB[args.data]()
     data_points = data.get_data(num=args.N)

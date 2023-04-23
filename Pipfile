@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 pytest = "*"
+autopep8 = "*"
 
 [packages]
 numpy = "*"
@@ -12,7 +13,7 @@ matplotlib = "*"
 scipy = "*"
 bistiming = "*"
 tqdm = "*"
-torch = "==1.0.1"
+torch = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.10"
